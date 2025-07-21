@@ -1,0 +1,47 @@
+behave==1.2.6
+selenium==4.15.2
+webdriver-manager==4.0.1
+allure-behave==2.13.2
+pytest==7.4.3
+configparser==6.0.0
+requests==2.31.0
+
+# Appium dependencies
+Appium-Python-Client==3.1.0
+
+# Playwright dependencies
+playwright==1.40.0
+pytest-playwright==0.4.3
+
+# API testing dependencies
+jsonschema==4.20.0
+pytest-html==4.1.1
+
+# Database testing dependencies
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+pymongo==4.6.0
+mysql-connector-python==8.2.0
+pyodbc==5.0.1
+redis==5.0.1
+
+# Desktop application testing dependencies
+pyautogui==0.9.54
+pygetwindow==0.0.9
+pywinauto==0.6.8
+opencv-python==4.8.1.78
+pillow==10.1.0
+imagehash==4.3.1
+psutil==5.9.6
+
+# Data processing and file utilities
+pandas==2.1.3
+openpyxl==3.1.2
+xlsxwriter==3.1.9
+jsonpath-ng==1.6.0
+lxml==4.9.3
+
+# Development and testing utilities
+pytest-mock==3.12.0
+faker==20.1.0
+pyyaml==6.0.1
