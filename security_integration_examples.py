@@ -35,7 +35,7 @@ class SecureWebTestExample:
             },
             {
                 'id': 'web_admin_password',
-                'value': 'SecureAdminPass123!',
+                'value': 'EXAMPLE_NOT_REAL_AdminPass123!',
                 'type': CredentialType.PASSWORD,
                 'description': 'Web application admin password',
                 'security_level': SecurityLevel.HIGH
@@ -110,21 +110,21 @@ class SecureDatabaseTestExample:
         db_credentials = [
             {
                 'id': 'mysql_connection',
-                'value': 'mysql://testuser:SecurePass123@localhost:3306/testdb',
+                'value': 'mysql://testuser:EXAMPLE_NOT_REAL_Pass123@localhost:3306/testdb',
                 'type': CredentialType.CONNECTION_STRING,
                 'description': 'MySQL test database connection',
                 'security_level': SecurityLevel.HIGH
             },
             {
                 'id': 'mongodb_connection',
-                'value': 'mongodb://admin:MongoPass456@localhost:27017/testdb?authSource=admin',
+                'value': 'mongodb://admin:EXAMPLE_NOT_REAL_MongoPass@localhost:27017/testdb?authSource=admin',
                 'type': CredentialType.CONNECTION_STRING,
                 'description': 'MongoDB test database connection',
                 'security_level': SecurityLevel.HIGH
             },
             {
                 'id': 'redis_password',
-                'value': 'RedisSecurePass789',
+                'value': 'EXAMPLE_NOT_REAL_RedisPass789',
                 'type': CredentialType.PASSWORD,
                 'description': 'Redis database password',
                 'security_level': SecurityLevel.MEDIUM
@@ -170,7 +170,7 @@ class SecureDatabaseTestExample:
             if 'mongodb_connection' in needs_rotation:
                 print("⚠️ MongoDB credentials need rotation")
                 # In real scenario, you would rotate the credentials
-                new_connection = 'mongodb://admin:NewMongoPass123@localhost:27017/testdb?authSource=admin'
+                new_connection = 'mongodb://admin:EXAMPLE_NOT_REAL_NewMongoPass@localhost:27017/testdb?authSource=admin'
                 cred_store.rotate_credential('mongodb_connection', new_connection, 'db_tester')
                 print("✓ MongoDB credentials rotated")
             
@@ -191,21 +191,21 @@ class SecureAPITestExample:
         api_credentials = [
             {
                 'id': 'stripe_api_key',
-                'value': 'sk_test_1234567890abcdef1234567890abcdef',
+                'value': 'sk_test_EXAMPLE_NOT_REAL_1234567890abcdef',
                 'type': CredentialType.API_KEY,
                 'description': 'Stripe API key for payment testing',
                 'security_level': SecurityLevel.CRITICAL
             },
             {
                 'id': 'oauth_client_secret',
-                'value': 'oauth_secret_abcdef123456789',
+                'value': 'oauth_secret_EXAMPLE_NOT_REAL_123456789',
                 'type': CredentialType.CUSTOM,
                 'description': 'OAuth client secret',
                 'security_level': SecurityLevel.HIGH
             },
             {
                 'id': 'jwt_signing_key',
-                'value': 'super_secret_jwt_signing_key_2024',
+                'value': 'EXAMPLE_NOT_REAL_jwt_signing_key_for_testing',
                 'type': CredentialType.CUSTOM,
                 'description': 'JWT signing key for token validation',
                 'security_level': SecurityLevel.CRITICAL

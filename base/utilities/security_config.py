@@ -263,7 +263,7 @@ def create_test_credentials(security_manager: SecurityManager, user_id: str = 'a
         },
         {
             'id': 'test_connection_string',
-            'value': 'mongodb://testuser:testpass@localhost:27017/testdb',
+            'value': 'mongodb://testuser:EXAMPLE_NOT_REAL_testpass@localhost:27017/testdb',
             'type': CredentialType.CONNECTION_STRING,
             'description': 'Test MongoDB Connection',
             'security_level': SecurityLevel.HIGH

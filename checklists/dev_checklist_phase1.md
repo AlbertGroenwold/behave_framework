@@ -251,6 +251,7 @@
 ### Code Standards
 - [ ] Create `.pylintrc` configuration
 - [ ] Implement pre-commit hooks
+- [ ] adding a pre-commit hook to scan for secrets automatically
 - [ ] Add code formatting (Black)
 - [ ] Create naming convention guide
 - [ ] Implement code review checklist
