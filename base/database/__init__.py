@@ -5,9 +5,16 @@ This package contains database testing base classes and utilities.
 """
 
 from .base_database_manager import BaseDatabaseManager
-from .database_managers import DatabaseManager
+from .database_managers import (
+    PostgreSQLManager, MySQLManager, SQLiteManager, 
+    MongoDBManager, RedisManager
+)
 
 __all__ = [
     'BaseDatabaseManager',
-    'DatabaseManager'
+    'PostgreSQLManager',
+    'MySQLManager', 
+    'SQLiteManager',
+    'MongoDBManager',
+    'RedisManager'
 ]

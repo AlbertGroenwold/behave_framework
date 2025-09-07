@@ -13,6 +13,7 @@ This package contains utility classes for common operations:
 - datetime_utils: Date and time operations
 - encoding_utils: Encoding/decoding operations
 - url_utils: URL parsing and manipulation
+- error_handler: Centralized error handling and retry mechanisms
 """
 
 from .excel_reader import ExcelReader
@@ -26,6 +27,13 @@ from .string_utils import StringUtils
 from .datetime_utils import DateTimeUtils
 from .encoding_utils import EncodingUtils
 from .url_utils import UrlUtils
+from .error_handler import (
+    ErrorCategory, BaseAutomationError, TransientError, PermanentError,
+    ApiError, DatabaseError, WebDriverError, ConfigurationError,
+    ValidationError, TimeoutError, ConnectionError, ErrorCategorizer,
+    RetryConfig, RetryHandler, retry_on_error, error_context,
+    CentralizedErrorHandler, error_handler, handle_errors
+)
 
 __all__ = [
     'ExcelReader',
@@ -38,5 +46,25 @@ __all__ = [
     'StringUtils',
     'DateTimeUtils',
     'EncodingUtils',
-    'UrlUtils'
+    'UrlUtils',
+    # Error handling components
+    'ErrorCategory',
+    'BaseAutomationError',
+    'TransientError',
+    'PermanentError',
+    'ApiError',
+    'DatabaseError',
+    'WebDriverError',
+    'ConfigurationError',
+    'ValidationError',
+    'TimeoutError',
+    'ConnectionError',
+    'ErrorCategorizer',
+    'RetryConfig',
+    'RetryHandler',
+    'retry_on_error',
+    'error_context',
+    'CentralizedErrorHandler',
+    'error_handler',
+    'handle_errors'
 ]

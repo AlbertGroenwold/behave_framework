@@ -3,6 +3,11 @@ from typing import Dict, Any, Optional, List
 import json
 import logging
 from .api_client import BaseAPIClient
+from ..utilities.recovery_strategies import (
+    create_recovery_hook, auto_recovery_manager, 
+    register_api_health_checker, recovery_context
+)
+from ..utilities.error_handler import ApiError, ErrorCategory
 
 
 class BaseAPIPage(ABC):
@@ -24,6 +29,55 @@ class BaseAPIPage(ABC):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.last_response = None
         self.last_request_time = None
+        
+        # Initialize recovery mechanisms
+        self.component_name = f"api_{self.__class__.__name__.lower()}"
+        self.recovery_hook = create_recovery_hook(self.component_name)
+        
+        # Register health checker for this API
+        try:
+            register_api_health_checker(
+                self.component_name, 
+                self.api_client, 
+                health_endpoint="/health"
+            )
+        except Exception as e:
+            self.logger.debug(f"Could not register health checker: {e}")
+        
+        # Set up recovery strategy for connection issues
+        auto_recovery_manager.register_recovery_strategy(
+            self.component_name,
+            self._api_recovery_strategy
+        )
+    
+    def _api_recovery_strategy(self, error: Exception) -> bool:
+        """Recovery strategy for API-related errors."""
+        try:
+            self.logger.info(f"Attempting API recovery for {self.component_name}")
+            
+            # Check if it's a connection-related error
+            error_name = type(error).__name__
+            if error_name in ['ConnectionError', 'Timeout', 'HTTPError']:
+                # Wait a moment for potential network recovery
+                import time
+                time.sleep(2)
+                
+                # Test if API is responsive
+                health_result = auto_recovery_manager.check_component_health(self.component_name)
+                if health_result.is_healthy():
+                    self.logger.info("API recovery successful")
+                    return True
+                
+            self.logger.warning("API recovery failed")
+            return False
+        except Exception as recovery_error:
+            self.logger.error(f"Error during API recovery: {recovery_error}")
+            return False
+    
+    def _make_request_with_recovery(self, method: str, endpoint: str = "", **kwargs):
+        """Make HTTP request with recovery capabilities."""
+        with recovery_context(self.component_name, auto_recovery_manager, max_recovery_attempts=2):
+            return self._make_request(method, endpoint, **kwargs)
     
     def _log_request(self, method: str, endpoint: str, **kwargs):
         """Log the request details"""
@@ -83,27 +137,27 @@ class BaseAPIPage(ABC):
     
     def get_all(self, params: Optional[Dict] = None):
         """Get all resources"""
-        return self._make_request('GET', params=params)
+        return self._make_request_with_recovery('GET', params=params)
     
     def get_by_id(self, resource_id: str):
         """Get resource by ID"""
-        return self._make_request('GET', f"/{resource_id}")
+        return self._make_request_with_recovery('GET', f"/{resource_id}")
     
     def create(self, data: Dict[str, Any]):
         """Create new resource"""
-        return self._make_request('POST', json=data)
+        return self._make_request_with_recovery('POST', json=data)
     
     def update(self, resource_id: str, data: Dict[str, Any]):
         """Update existing resource"""
-        return self._make_request('PUT', f"/{resource_id}", json=data)
+        return self._make_request_with_recovery('PUT', f"/{resource_id}", json=data)
     
     def partial_update(self, resource_id: str, data: Dict[str, Any]):
         """Partially update existing resource"""
-        return self._make_request('PATCH', f"/{resource_id}", json=data)
+        return self._make_request_with_recovery('PATCH', f"/{resource_id}", json=data)
     
     def delete(self, resource_id: str):
         """Delete resource by ID"""
-        return self._make_request('DELETE', f"/{resource_id}")
+        return self._make_request_with_recovery('DELETE', f"/{resource_id}")
     
     # Validation methods
     

@@ -1,4 +1,4 @@
-# Central Quality Hub - Comprehensive Python Automation Framework
+# Comprehensive Python Automation Framework
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![Selenium](https://img.shields.io/badge/Selenium-4.25.0-green)
@@ -11,7 +11,7 @@
 
 ## 🎯 Overview
 
-The Central Quality Hub is a comprehensive, enterprise-grade Python automation testing framework built with **Behave BDD** that supports multiple testing approaches across different platforms and technologies. The framework follows industry best practices including the **Page Object Model** pattern, **SOLID principles**, and provides a clean, maintainable, and scalable architecture for enterprise-level test automation.
+A comprehensive, enterprise-grade Python automation testing framework built with **Behave BDD** that supports multiple testing approaches across different platforms and technologies. The framework follows industry best practices including the **Page Object Model** pattern, **SOLID principles**, and provides a clean, maintainable, and scalable architecture for enterprise-level test automation.
 
 ### Key Highlights
 - 🚀 **Multi-Platform Support**: Web, Mobile, API, Database, and Desktop automation
@@ -243,86 +243,8 @@ behave_automation/
 
 ## ⚡ Quick Start
 
-### 1. Clone and Setup
-```bash
-# Clone the repository
-git clone https://github.com/AlbertGroenwold/cqh_behave_framework.git
-cd cqh_behave_framework
-
-# Navigate to the framework directory
-cd automation_framework/behave_automation
-
-# Windows Setup (PowerShell)
-.\setup.bat
-
-# Linux/Mac Setup
-chmod +x setup.sh
-./setup.sh
-
-# Alternative: Manual setup
-python -m venv venv
-# Windows
-venv\Scripts\activate
-# Linux/Mac
-source venv/bin/activate
-
-pip install -r requirements.txt
-```
-
-### 2. Install Browser Dependencies
-```bash
-# For Playwright (recommended for web testing)
-playwright install
-playwright install-deps  # Install system dependencies
-
-# Verify Playwright installation
-playwright --version
-
-# For Selenium (alternative web testing)
-# WebDriver binaries are managed automatically via webdriver-manager
-
-# For mobile testing (optional)
-npm install -g appium@next
-appium driver install uiautomator2    # For Android
-appium driver install xcuitest        # For iOS
-appium plugin install images          # For image-based testing
-
-# Verify Appium installation
-appium --version
-appium driver list --installed
-```
-
-### 3. Environment Configuration
-```bash
-# Copy environment template (create if doesn't exist)
-cp .env.template .env
-
-# Edit .env file with your configuration
-# API_BASE_URL=https://api.example.com
-# WEB_BASE_URL=https://app.example.com
-# DB_CONNECTION_STRING=postgresql://user:pass@localhost:5432/testdb
-```
-
-### 4. Run Sample Tests
-```bash
-# Quick smoke test (recommended for first run)
-behave "SystemName (Example)/API/features/" --tags=@smoke -f pretty
-
-# Web tests with Playwright (modern approach)
-behave "SystemName (Example)/Web (Playwright)/features/" --tags=@smoke
-
-# Web tests with Selenium (traditional approach)
-behave "SystemName (Example)/Web (Selenium)/features/" --tags=@smoke
-
-# Database tests
-behave "SystemName (Example)/DB/features/" --tags=@smoke
-
-# Run all smoke tests across all frameworks
-behave --tags=@smoke --format=pretty
-
-# Generate comprehensive report
-behave --tags=@smoke --format=allure_behave.formatter:AllureFormatter -o reports/allure
-```
+### Getting started
+Refer to the setup_readme.md file.
 
 ## 🎯 Running Tests
 
@@ -1397,7 +1319,7 @@ class PerformanceMonitor:
 
 ---
 
-**Repository**: [Central Quality Hub - Behave Framework](https://github.com/AlbertGroenwold/cqh_behave_framework)  
+**Repository**: [Behave Framework](https://github.com/AlbertGroenwold/cqh_behave_framework)  
 **Maintainer**: Albert Groenwold  
 **Created**: 2025  
 **Framework Type**: Behavior-Driven Development (BDD) Test Automation

@@ -3,6 +3,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import logging
+from ..utilities.recovery_strategies import (
+    create_recovery_hook, auto_recovery_manager, 
+    register_webdriver_health_checker, recovery_context
+)
+from ..utilities.error_handler import WebDriverError, ErrorCategory
 
 
 class BasePage:
@@ -12,34 +17,89 @@ class BasePage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
         self.logger = logging.getLogger(self.__class__.__name__)
+        
+        # Initialize recovery mechanisms
+        self.component_name = f"webdriver_{self.__class__.__name__.lower()}"
+        self.recovery_hook = create_recovery_hook(self.component_name)
+        
+        # Register health checker for WebDriver
+        try:
+            register_webdriver_health_checker(
+                self.component_name, 
+                self.driver
+            )
+        except Exception as e:
+            self.logger.debug(f"Could not register WebDriver health checker: {e}")
+        
+        # Set up recovery strategy for WebDriver issues
+        auto_recovery_manager.register_recovery_strategy(
+            self.component_name,
+            self._webdriver_recovery_strategy
+        )
+    
+    def _webdriver_recovery_strategy(self, error: Exception) -> bool:
+        """Recovery strategy for WebDriver-related errors."""
+        try:
+            self.logger.info(f"Attempting WebDriver recovery for {self.component_name}")
+            
+            # Check if it's a recoverable WebDriver error
+            error_name = type(error).__name__
+            if error_name in ['TimeoutException', 'WebDriverException', 'StaleElementReferenceException']:
+                # Wait a moment and check driver health
+                import time
+                time.sleep(1)
+                
+                health_result = auto_recovery_manager.check_component_health(self.component_name)
+                if health_result.is_healthy():
+                    self.logger.info("WebDriver recovery successful")
+                    return True
+                
+                # Try refreshing the page as a recovery mechanism
+                try:
+                    self.driver.refresh()
+                    time.sleep(2)
+                    
+                    # Check again after refresh
+                    health_result = auto_recovery_manager.check_component_health(self.component_name)
+                    if health_result.is_healthy():
+                        self.logger.info("WebDriver recovery successful after page refresh")
+                        return True
+                except Exception as refresh_error:
+                    self.logger.warning(f"Page refresh failed during recovery: {refresh_error}")
+                
+            self.logger.warning("WebDriver recovery failed")
+            return False
+        except Exception as recovery_error:
+            self.logger.error(f"Error during WebDriver recovery: {recovery_error}")
+            return False
+    
+    def _execute_with_recovery(self, operation_name: str, operation_func, *args, **kwargs):
+        """Execute WebDriver operations with recovery capabilities."""
+        with recovery_context(self.component_name, auto_recovery_manager, max_recovery_attempts=1):
+            return operation_func(*args, **kwargs)
     
     def find_element(self, locator, timeout=10):
         """Find a single element"""
-        try:
-            element = WebDriverWait(self.driver, timeout).until(
-                EC.presence_of_element_located(locator)
-            )
-            return element
-        except TimeoutException:
-            self.logger.error(f"Element not found: {locator}")
-            raise
-    
-    def find_elements(self, locator, timeout=10):
-        """Find multiple elements"""
-        try:
-            elements = WebDriverWait(self.driver, timeout).until(
-                EC.presence_of_all_elements_located(locator)
-            )
-            return elements
-        except TimeoutException:
-            self.logger.error(f"Elements not found: {locator}")
-            return []
+        def _find():
+            try:
+                element = WebDriverWait(self.driver, timeout).until(
+                    EC.presence_of_element_located(locator)
+                )
+                return element
+            except TimeoutException:
+                self.logger.error(f"Element not found: {locator}")
+                raise
+        
+        return self._execute_with_recovery("find_element", _find)
     
     def click_element(self, locator, timeout=10):
         """Click an element"""
-        element = self.wait_for_element_clickable(locator, timeout)
-        element.click()
-        self.logger.info(f"Clicked element: {locator}")
+        def _click():
+            element = self.wait_for_element_clickable(locator, timeout)
+            element.click()
+            self.logger.info(f"Clicked element: {locator}")
+        
+        return self._execute_with_recovery("click_element", _click)
     
     def type_text(self, locator, text, timeout=10):
         """Type text into an element"""
